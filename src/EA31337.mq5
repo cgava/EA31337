@@ -56,17 +56,24 @@
 
 // Global variables.
 EA *ea;
-
+Log* logger;
 /* EA event handler functions */
 
 /**
  * Initialization function of the expert.
  */
 int OnInit() {
+  logger=LogS::GetInstance(VerboseLevel);
+  logger.SetSaveToFileOnAdd(true);
+  logger.SetFlushDelay(0);
   bool _initiated = true;
   PrintFormat("%s v%s (%s) initializing...", ea_name, ea_version, ea_link);
   _initiated &= InitEA();
+   logger.Info( StringFormat("EA31337 EA initialized, EA=%s",_initiated ? "INIT_SUCCEEDED" : "INIT_FAILED"));
+  
   _initiated &= InitStrategies();
+   logger.Info( StringFormat("EA31337 Strategies initialized :%s",_initiated ? "INIT_SUCCEEDED" : "INIT_FAILED"));
+  
   if (GetLastError() > 0) {
     ea.GetLogger().Error("Error during initializing!", __FUNCTION_LINE__, Terminal::GetLastErrorText());
   }
@@ -77,7 +84,9 @@ int OnInit() {
   Chart::WindowRedraw();
   if (!_initiated) {
     ea.Set(STRUCT_ENUM(EAState, EA_STATE_FLAG_ENABLED), false);
+    ea.GetLogger().Error("EA31337 state DISABLED","",__FUNCTION_LINE__);
   }
+  ea.GetLogger().Info(StringFormat("Init passed %s", _initiated ? "INIT_SUCCEEDED" : "INIT_FAILED"),"",__FUNCTION_LINE__);
   return (_initiated ? INIT_SUCCEEDED : INIT_FAILED);
 }
 
@@ -367,104 +376,104 @@ bool EAStrategyAdd(ENUM_STRATEGY _stg, int _tfs) {
   bool _result = true;
   unsigned int _magic_no = EA_MagicNumber + _stg * FINAL_ENUM_TIMEFRAMES_INDEX;
   switch (_stg) {
-    case STRAT_AC:
-      return ea.StrategyAdd<Stg_AC>(_tfs, _magic_no, _stg);
-    case STRAT_AD:
-      return ea.StrategyAdd<Stg_AD>(_tfs, _magic_no, _stg);
-    case STRAT_ADX:
-      return ea.StrategyAdd<Stg_ADX>(_tfs, _magic_no, _stg);
-    case STRAT_AMA:
-      return ea.StrategyAdd<Stg_AMA>(_tfs, _magic_no, _stg);
-    case STRAT_ASI:
-      return ea.StrategyAdd<Stg_ASI>(_tfs, _magic_no, _stg);
-    case STRAT_ATR:
-      return ea.StrategyAdd<Stg_ATR>(_tfs, _magic_no, _stg);
-    case STRAT_ALLIGATOR:
-      return ea.StrategyAdd<Stg_Alligator>(_tfs, _magic_no, _stg);
-    case STRAT_AWESOME:
-      return ea.StrategyAdd<Stg_Awesome>(_tfs, _magic_no, _stg);
-#ifdef __MQL5__
-      // case STRAT_ATR_MA_TREND:
-      // return ea.StrategyAdd<Stg_ATR_MA_Trend>(_tfs, _magic_no, _stg);
-#endif
-    case STRAT_BWMFI:
-      return ea.StrategyAdd<Stg_BWMFI>(_tfs, _magic_no, _stg);
-    case STRAT_BANDS:
-      return ea.StrategyAdd<Stg_Bands>(_tfs, _magic_no, _stg);
-    case STRAT_BEARS_POWER:
-      return ea.StrategyAdd<Stg_BearsPower>(_tfs, _magic_no, _stg);
-    case STRAT_BULLS_POWER:
-      return ea.StrategyAdd<Stg_BullsPower>(_tfs, _magic_no, _stg);
-    case STRAT_CCI:
-      return ea.StrategyAdd<Stg_CCI>(_tfs, _magic_no, _stg);
-    case STRAT_CHAIKIN:
-      return ea.StrategyAdd<Stg_Chaikin>(_tfs, _magic_no, _stg);
-    case STRAT_DEMA:
-      return ea.StrategyAdd<Stg_DEMA>(_tfs, _magic_no, _stg);
-    case STRAT_DEMARKER:
-      return ea.StrategyAdd<Stg_DeMarker>(_tfs, _magic_no, _stg);
-    case STRAT_ENVELOPES:
-      return ea.StrategyAdd<Stg_Envelopes>(_tfs, _magic_no, _stg);
-    case STRAT_EWO:
-      return ea.StrategyAdd<Stg_ElliottWave>(_tfs, _magic_no, _stg);
-    case STRAT_FORCE:
-      return ea.StrategyAdd<Stg_Force>(_tfs, _magic_no, _stg);
-    case STRAT_FRACTALS:
-      return ea.StrategyAdd<Stg_Fractals>(_tfs, _magic_no, _stg);
-    case STRAT_GATOR:
-      return ea.StrategyAdd<Stg_Gator>(_tfs, _magic_no, _stg);
-    case STRAT_HEIKEN_ASHI:
-      return ea.StrategyAdd<Stg_HeikenAshi>(_tfs, _magic_no, _stg);
-    case STRAT_ICHIMOKU:
-      return ea.StrategyAdd<Stg_Ichimoku>(_tfs, _magic_no, _stg);
+//     case STRAT_AC:
+//       return ea.StrategyAdd<Stg_AC>(_tfs, _magic_no, _stg);
+//     case STRAT_AD:
+//       return ea.StrategyAdd<Stg_AD>(_tfs, _magic_no, _stg);
+//     case STRAT_ADX:
+//       return ea.StrategyAdd<Stg_ADX>(_tfs, _magic_no, _stg);
+//     case STRAT_AMA:
+//       return ea.StrategyAdd<Stg_AMA>(_tfs, _magic_no, _stg);
+//     case STRAT_ASI:
+//       return ea.StrategyAdd<Stg_ASI>(_tfs, _magic_no, _stg);
+//     case STRAT_ATR:
+//       return ea.StrategyAdd<Stg_ATR>(_tfs, _magic_no, _stg);
+//     case STRAT_ALLIGATOR:
+//       return ea.StrategyAdd<Stg_Alligator>(_tfs, _magic_no, _stg);
+//     case STRAT_AWESOME:
+//       return ea.StrategyAdd<Stg_Awesome>(_tfs, _magic_no, _stg);
+// #ifdef __MQL5__
+//       // case STRAT_ATR_MA_TREND:
+//       // return ea.StrategyAdd<Stg_ATR_MA_Trend>(_tfs, _magic_no, _stg);
+// #endif
+//     case STRAT_BWMFI:
+//       return ea.StrategyAdd<Stg_BWMFI>(_tfs, _magic_no, _stg);
+//     case STRAT_BANDS:
+//       return ea.StrategyAdd<Stg_Bands>(_tfs, _magic_no, _stg);
+//     case STRAT_BEARS_POWER:
+//       return ea.StrategyAdd<Stg_BearsPower>(_tfs, _magic_no, _stg);
+//     case STRAT_BULLS_POWER:
+//       return ea.StrategyAdd<Stg_BullsPower>(_tfs, _magic_no, _stg);
+//     case STRAT_CCI:
+//       return ea.StrategyAdd<Stg_CCI>(_tfs, _magic_no, _stg);
+//     case STRAT_CHAIKIN:
+//       return ea.StrategyAdd<Stg_Chaikin>(_tfs, _magic_no, _stg);
+//     case STRAT_DEMA:
+//       return ea.StrategyAdd<Stg_DEMA>(_tfs, _magic_no, _stg);
+//     case STRAT_DEMARKER:
+//       return ea.StrategyAdd<Stg_DeMarker>(_tfs, _magic_no, _stg);
+//     case STRAT_ENVELOPES:
+//       return ea.StrategyAdd<Stg_Envelopes>(_tfs, _magic_no, _stg);
+//     case STRAT_EWO:
+//       return ea.StrategyAdd<Stg_ElliottWave>(_tfs, _magic_no, _stg);
+//     case STRAT_FORCE:
+//       return ea.StrategyAdd<Stg_Force>(_tfs, _magic_no, _stg);
+//     case STRAT_FRACTALS:
+//       return ea.StrategyAdd<Stg_Fractals>(_tfs, _magic_no, _stg);
+//     case STRAT_GATOR:
+//       return ea.StrategyAdd<Stg_Gator>(_tfs, _magic_no, _stg);
+//     case STRAT_HEIKEN_ASHI:
+//       return ea.StrategyAdd<Stg_HeikenAshi>(_tfs, _magic_no, _stg);
+//     case STRAT_ICHIMOKU:
+//       return ea.StrategyAdd<Stg_Ichimoku>(_tfs, _magic_no, _stg);
     case STRAT_MA:
       return ea.StrategyAdd<Stg_MA>(_tfs, _magic_no, _stg);
-    case STRAT_MACD:
-      return ea.StrategyAdd<Stg_MACD>(_tfs, _magic_no, _stg);
-    case STRAT_MFI:
-      return ea.StrategyAdd<Stg_MFI>(_tfs, _magic_no, _stg);
-    case STRAT_MOMENTUM:
-      return ea.StrategyAdd<Stg_Momentum>(_tfs, _magic_no, _stg);
-    case STRAT_OBV:
-      return ea.StrategyAdd<Stg_OBV>(_tfs, _magic_no, _stg);
-    case STRAT_OSMA:
-      return ea.StrategyAdd<Stg_OsMA>(_tfs, _magic_no, _stg);
-    case STRAT_PATTERN:
-      return ea.StrategyAdd<Stg_Pattern>(_tfs, _magic_no, _stg);
-    case STRAT_PINBAR:
-      return ea.StrategyAdd<Stg_Pinbar>(_tfs, _magic_no, _stg);
-    case STRAT_PIVOT:
-      return ea.StrategyAdd<Stg_Pivot>(_tfs, _magic_no, _stg);
-    case STRAT_RSI:
-      return ea.StrategyAdd<Stg_RSI>(_tfs, _magic_no, _stg);
-    case STRAT_RVI:
-      return ea.StrategyAdd<Stg_RVI>(_tfs, _magic_no, _stg);
-    case STRAT_SAR:
-      return ea.StrategyAdd<Stg_SAR>(_tfs, _magic_no, _stg);
-    // case STRAT_SAWA:
-    // return ea.StrategyAdd<Stg_SAWA>(_tfs, _magic_no, _stg);
-    case STRAT_STDDEV:
-      return ea.StrategyAdd<Stg_StdDev>(_tfs, _magic_no, _stg);
-    case STRAT_STOCHASTIC:
-      return ea.StrategyAdd<Stg_Stochastic>(_tfs, _magic_no, _stg);
-#ifdef __MQL5__
-      // case STRAT_SUPERTREND:
-      // return ea.StrategyAdd<Stg_SuperTrend>(_tfs, _magic_no, _stg);
-#endif
-    case STRAT_SVE_BB:
-      return ea.StrategyAdd<Stg_SVE_Bollinger_Bands>(_tfs, _magic_no, _stg);
-    case STRAT_TMAT_SVEBB:
-      return ea.StrategyAdd<Stg_TMAT_SVEBB>(_tfs, _magic_no, _stg);
-    // case STRAT_TMA_CG:
-    // _result &= ea.StrategyAdd<Stg_TMA_CG>(_tfs, _magic_no, _stg);
-    case STRAT_TMA_TRUE:
-      _result &= ea.StrategyAdd<Stg_TMA_True>(_tfs, _magic_no, _stg);
-      // _result &= ea.GetStrategy(_magic_no).Set(); @todo
-      break;
-    case STRAT_WPR:
-      return ea.StrategyAdd<Stg_WPR>(_tfs, _magic_no, _stg);
-    case STRAT_ZIGZAG:
-      return ea.StrategyAdd<Stg_ZigZag>(_tfs, _magic_no, _stg);
+//     case STRAT_MACD:
+//       return ea.StrategyAdd<Stg_MACD>(_tfs, _magic_no, _stg);
+//     case STRAT_MFI:
+//       return ea.StrategyAdd<Stg_MFI>(_tfs, _magic_no, _stg);
+//     case STRAT_MOMENTUM:
+//       return ea.StrategyAdd<Stg_Momentum>(_tfs, _magic_no, _stg);
+//     case STRAT_OBV:
+//       return ea.StrategyAdd<Stg_OBV>(_tfs, _magic_no, _stg);
+//     case STRAT_OSMA:
+//       return ea.StrategyAdd<Stg_OsMA>(_tfs, _magic_no, _stg);
+//     case STRAT_PATTERN:
+//       return ea.StrategyAdd<Stg_Pattern>(_tfs, _magic_no, _stg);
+//     case STRAT_PINBAR:
+//       return ea.StrategyAdd<Stg_Pinbar>(_tfs, _magic_no, _stg);
+//     case STRAT_PIVOT:
+//       return ea.StrategyAdd<Stg_Pivot>(_tfs, _magic_no, _stg);
+//     case STRAT_RSI:
+//       return ea.StrategyAdd<Stg_RSI>(_tfs, _magic_no, _stg);
+//     case STRAT_RVI:
+//       return ea.StrategyAdd<Stg_RVI>(_tfs, _magic_no, _stg);
+//     case STRAT_SAR:
+//       return ea.StrategyAdd<Stg_SAR>(_tfs, _magic_no, _stg);
+//     // case STRAT_SAWA:
+//     // return ea.StrategyAdd<Stg_SAWA>(_tfs, _magic_no, _stg);
+//     case STRAT_STDDEV:
+//       return ea.StrategyAdd<Stg_StdDev>(_tfs, _magic_no, _stg);
+//     case STRAT_STOCHASTIC:
+//       return ea.StrategyAdd<Stg_Stochastic>(_tfs, _magic_no, _stg);
+// #ifdef __MQL5__
+//       // case STRAT_SUPERTREND:
+//       // return ea.StrategyAdd<Stg_SuperTrend>(_tfs, _magic_no, _stg);
+// #endif
+//     case STRAT_SVE_BB:
+//       return ea.StrategyAdd<Stg_SVE_Bollinger_Bands>(_tfs, _magic_no, _stg);
+//     case STRAT_TMAT_SVEBB:
+//       return ea.StrategyAdd<Stg_TMAT_SVEBB>(_tfs, _magic_no, _stg);
+//     // case STRAT_TMA_CG:
+//     // _result &= ea.StrategyAdd<Stg_TMA_CG>(_tfs, _magic_no, _stg);
+//     case STRAT_TMA_TRUE:
+//       _result &= ea.StrategyAdd<Stg_TMA_True>(_tfs, _magic_no, _stg);
+//       // _result &= ea.GetStrategy(_magic_no).Set(); @todo
+//       break;
+//     case STRAT_WPR:
+//       return ea.StrategyAdd<Stg_WPR>(_tfs, _magic_no, _stg);
+//     case STRAT_ZIGZAG:
+//       return ea.StrategyAdd<Stg_ZigZag>(_tfs, _magic_no, _stg);
     case STRAT_NONE:
       break;
     default:

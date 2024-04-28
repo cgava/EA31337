@@ -74,4 +74,4 @@
 #undef __trace__         // Disable trace messages.
 #endif
 
-#define ea_auth (ea_author[5] == 98)
+#define ea_auth (ea_author[5] == 98)   //check if 6th letter of author is 'b' (ascii 98)
